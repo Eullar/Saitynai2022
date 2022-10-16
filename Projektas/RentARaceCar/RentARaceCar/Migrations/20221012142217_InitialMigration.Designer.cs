@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RentARaceCar.DbContext;
 
@@ -10,9 +11,10 @@ using RentARaceCar.DbContext;
 namespace RentARaceCar.Migrations
 {
     [DbContext(typeof(RentARaceCarDbContext))]
-    partial class RentARaceCarDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221012142217_InitialMigration")]
+    partial class InitialMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -62,9 +64,6 @@ namespace RentARaceCar.Migrations
                         .HasColumnType("char(36)");
 
                     b.Property<DateTime>("OrderDate")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<DateTime>("RentDate")
                         .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");

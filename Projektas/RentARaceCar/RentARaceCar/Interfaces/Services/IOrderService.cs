@@ -1,12 +1,13 @@
 ﻿using RentARaceCar.Models;
+using RentARaceCar.Models.DomainModels;
 
 namespace RentARaceCar.Interfaces.Services;
 
 public interface IOrderService
 {
-    public Guid AddOrder(Order order);
-    public Order UpdateOrder(Order order);
-    public Order GetOrder(Guid orderId);
-    public bool DeleteOrder(Guid orderId);
-    public List<Order> GetAllOrders();
+    public Task<OrderModel> AddOrderModelAsync(OrderModel orderModel);
+    public Task<OrderModel> UpdateOrderModelAsync(OrderModel orderModel);
+    public Task<OrderModel?> GetOrderModelAsync(Guid orderModelId);
+    public Task DeleteOrderModelAsync(OrderModel orderModel);
+    public Task<List<OrderModel>> GetAllOrderModelsAsync();
 }

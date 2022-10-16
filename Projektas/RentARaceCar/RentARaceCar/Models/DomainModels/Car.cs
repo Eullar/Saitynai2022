@@ -1,8 +1,8 @@
 ﻿using RentARaceCar.Enums;
 
-namespace RentARaceCar.Models;
+namespace RentARaceCar.Models.DomainModels;
 
-public class Car
+public class CarModel
 {
     public Guid Id { get; set; }
     public string Manufacturer { get; set; }
@@ -11,4 +11,7 @@ public class Car
     public DrivetrainTypes DrivetrainType { get; set; }
     public TyreCompounds TyreCompound { get; set; }
     public Guid RentOfficeId { get; set; }
+
+    public virtual RentOfficeModel RentOffice { get; set; }
+    public virtual List<OrderModel> Orders { get; set; }
 }

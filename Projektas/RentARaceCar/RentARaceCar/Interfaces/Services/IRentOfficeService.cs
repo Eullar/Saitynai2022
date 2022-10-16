@@ -1,12 +1,15 @@
 ﻿using RentARaceCar.Models;
+using RentARaceCar.Models.DomainModels;
+using RentARaceCar.Models.Requests;
+using RentARaceCar.Models.Requests.RentOffice;
 
 namespace RentARaceCar.Interfaces.Services;
 
 public interface IRentOfficeService
 {
-    public Guid AddRentOffice(RentOffice rentOffice);
-    public RentOffice UpdateRentOffice(RentOffice rentOffice);
-    public RentOffice GetRentOffice(Guid rentOfficeId);
-    public bool DeleteRentOffice(Guid rentOfficeId);
-    public List<RentOffice> GetAllRentOffices();
+    public Task<RentOfficeModel> AddRentOfficeAsync(AddRentOfficeRequest rentOffice);
+    public Task<RentOfficeModel> UpdateRentOfficeAsync(RentOfficeModel rentOffice);
+    public Task<RentOfficeModel?> GetRentOfficeAsync(Guid rentOfficeId);
+    public Task DeleteRentOfficeAsync(RentOfficeModel rentOfficeModel);
+    public Task<List<RentOfficeModel>> GetAllRentOfficesAsync();
 }

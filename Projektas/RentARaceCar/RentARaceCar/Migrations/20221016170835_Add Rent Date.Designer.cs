@@ -11,8 +11,8 @@ using RentARaceCar.DbContext;
 namespace RentARaceCar.Migrations
 {
     [DbContext(typeof(RentARaceCarDbContext))]
-    [Migration("20220926094756_Initial")]
-    partial class Initial
+    [Migration("20221016170835_Add Rent Date")]
+    partial class AddRentDate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -21,7 +21,7 @@ namespace RentARaceCar.Migrations
                 .HasAnnotation("ProductVersion", "6.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("RentARaceCar.Models.Car", b =>
+            modelBuilder.Entity("RentARaceCar.Models.DomainModels.CarModel", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -51,10 +51,10 @@ namespace RentARaceCar.Migrations
 
                     b.HasIndex("RentOfficeId");
 
-                    b.ToTable("Cars");
+                    b.ToTable("Cars", (string)null);
                 });
 
-            modelBuilder.Entity("RentARaceCar.Models.Order", b =>
+            modelBuilder.Entity("RentARaceCar.Models.DomainModels.OrderModel", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -66,14 +66,17 @@ namespace RentARaceCar.Migrations
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<DateTime>("RentDate")
+                        .HasColumnType("datetime(6)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CarId");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
                 });
 
-            modelBuilder.Entity("RentARaceCar.Models.RentOffice", b =>
+            modelBuilder.Entity("RentARaceCar.Models.DomainModels.RentOfficeModel", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -89,37 +92,37 @@ namespace RentARaceCar.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("RentOffices");
+                    b.ToTable("RentOffices", (string)null);
                 });
 
-            modelBuilder.Entity("RentARaceCar.Models.Car", b =>
+            modelBuilder.Entity("RentARaceCar.Models.DomainModels.CarModel", b =>
                 {
-                    b.HasOne("RentARaceCar.Models.RentOffice", "RentOffice")
+                    b.HasOne("RentARaceCar.Models.DomainModels.RentOfficeModel", "RentOffice")
                         .WithMany("Cars")
                         .HasForeignKey("RentOfficeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("RentOffice");
                 });
 
-            modelBuilder.Entity("RentARaceCar.Models.Order", b =>
+            modelBuilder.Entity("RentARaceCar.Models.DomainModels.OrderModel", b =>
                 {
-                    b.HasOne("RentARaceCar.Models.Car", "Car")
+                    b.HasOne("RentARaceCar.Models.DomainModels.CarModel", "Car")
                         .WithMany("Orders")
                         .HasForeignKey("CarId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Car");
                 });
 
-            modelBuilder.Entity("RentARaceCar.Models.Car", b =>
+            modelBuilder.Entity("RentARaceCar.Models.DomainModels.CarModel", b =>
                 {
                     b.Navigation("Orders");
                 });
 
-            modelBuilder.Entity("RentARaceCar.Models.RentOffice", b =>
+            modelBuilder.Entity("RentARaceCar.Models.DomainModels.RentOfficeModel", b =>
                 {
                     b.Navigation("Cars");
                 });

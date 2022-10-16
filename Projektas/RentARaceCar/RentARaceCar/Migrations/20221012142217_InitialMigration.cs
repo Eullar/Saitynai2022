@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace RentARaceCar.Migrations
 {
-    public partial class Initial : Migration
+    public partial class InitialMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -49,8 +49,7 @@ namespace RentARaceCar.Migrations
                         name: "FK_Cars_RentOffices_RentOfficeId",
                         column: x => x.RentOfficeId,
                         principalTable: "RentOffices",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -69,8 +68,7 @@ namespace RentARaceCar.Migrations
                         name: "FK_Orders_Cars_CarId",
                         column: x => x.CarId,
                         principalTable: "Cars",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 

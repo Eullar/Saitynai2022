@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using RentARaceCar.DbContext;
+using RentARaceCar.Interfaces.Services;
+using RentARaceCar.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,12 +10,18 @@ builder.Services.AddControllersWithViews();
 
 var connectionString = "server=localhost;user=root;password=password;database=RentARaceCar";
 
+builder.Services.AddControllers();
+
 builder.Services.AddDbContext<RentARaceCarDbContext>(dbContextOptions =>
     dbContextOptions.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
         .LogTo(Console.WriteLine, LogLevel.Information)
         .EnableSensitiveDataLogging()
         .EnableDetailedErrors()
 );
+
+builder.Services.AddScoped<IRentOfficeService, RentOfficeService>();
+builder.Services.AddScoped<ICarService, CarService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 var app = builder.Build();
 
@@ -29,11 +37,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.MapControllers();
 
 app.UseAuthorization();
-
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
