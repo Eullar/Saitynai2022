@@ -40,7 +40,7 @@ public class OrderController : ControllerBase
             return NotFound("Rent Office not found");
         }
 
-        var car = await _carService.GetCarModelAsync(carId);
+        var car = await _carService.GetCarModelAsync(rentOfficeId, carId);
 
         if (car is null)
         {
@@ -74,14 +74,14 @@ public class OrderController : ControllerBase
             return NotFound("Rent Office not found");
         }
 
-        var car = await _carService.GetCarModelAsync(carId);
+        var car = await _carService.GetCarModelAsync(rentOfficeId, carId);
 
         if (car is null)
         {
             return NotFound("Car not found");
         }
 
-        var order = await _orderService.GetOrderModelAsync(orderId);
+        var order = await _orderService.GetOrderModelAsync(carId, orderId);
 
         if (order is null)
         {
@@ -106,14 +106,14 @@ public class OrderController : ControllerBase
             return NotFound("Rent Office not found");
         }
         
-        var car = await _carService.GetCarModelAsync(carId);
+        var car = await _carService.GetCarModelAsync(rentOfficeId, carId);
 
         if (car is null)
         {
             return NotFound("Car not found");
         }
 
-        var order = await _orderService.GetOrderModelAsync(orderId);
+        var order = await _orderService.GetOrderModelAsync(carId, orderId);
 
         if (order is null)
         {
@@ -140,14 +140,14 @@ public class OrderController : ControllerBase
             return NotFound("Rent Office not found");
         }
 
-        var car = await _carService.GetCarModelAsync(carId);
+        var car = await _carService.GetCarModelAsync(rentOfficeId, carId);
 
         if (car is null)
         {
             return NotFound("Car not found");
         }
 
-        var order = await _orderService.GetOrderModelAsync(orderId);
+        var order = await _orderService.GetOrderModelAsync(carId, orderId);
 
         if (order is null)
         {
@@ -173,14 +173,14 @@ public class OrderController : ControllerBase
             return NotFound("Rent Office not found");
         }
         
-        var car = await _carService.GetCarModelAsync(carId);
+        var car = await _carService.GetCarModelAsync(rentOfficeId, carId);
 
         if (car is null)
         {
             return NotFound("Car not found");
         }
 
-        var orderModels = await _orderService.GetAllOrderModelsAsync();
+        var orderModels = await _orderService.GetAllOrderModelsAsync(carId);
 
         var orders = PagedList<Order>.Create(orderModels.Select(c => c.ToOrder()).AsQueryable(),
             parameters.PageNumber, parameters.PageSize);

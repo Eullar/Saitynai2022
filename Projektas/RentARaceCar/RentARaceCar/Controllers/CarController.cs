@@ -67,7 +67,7 @@ public class CarController : ControllerBase
             return NotFound("Rent Office not found");
         }
 
-        var car = await _carService.GetCarModelAsync(carId);
+        var car = await _carService.GetCarModelAsync(rentOfficeId, carId);
 
         if (car is null)
         {
@@ -92,7 +92,7 @@ public class CarController : ControllerBase
             return NotFound("Rent Office not found");
         }
 
-        var car = await _carService.GetCarModelAsync(carId);
+        var car = await _carService.GetCarModelAsync(rentOfficeId, carId);
 
         if (car is null)
         {
@@ -123,7 +123,7 @@ public class CarController : ControllerBase
             return NotFound("Rent Office not found");
         }
 
-        var car = await _carService.GetCarModelAsync(carId);
+        var car = await _carService.GetCarModelAsync(rentOfficeId, carId);
 
         if (car is null)
         {
@@ -154,7 +154,7 @@ public class CarController : ControllerBase
             return NotFound("Rent Office not found");
         }
 
-        var carModels = await _carService.GetAllCarModelsAsync();
+        var carModels = await _carService.GetAllCarModelsAsync(rentOfficeId);
 
         var cars = PagedList<Car>.Create(carModels.Select(c => c.ToCar()).AsQueryable(),
             parameters.PageNumber, parameters.PageSize);

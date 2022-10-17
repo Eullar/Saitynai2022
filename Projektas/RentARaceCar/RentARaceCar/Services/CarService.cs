@@ -39,8 +39,8 @@ public class CarService : ICarService
         return carModel;
     }
 
-    public Task<CarModel?> GetCarModelAsync(Guid carModelId) => 
-        _context.Cars.Include(x => x.Orders).FirstOrDefaultAsync(c => c.Id == carModelId);
+    public Task<CarModel?> GetCarModelAsync(Guid rentOfficeId, Guid carModelId) => 
+        _context.Cars.Include(x => x.Orders).FirstOrDefaultAsync(c => c.Id == carModelId && c.RentOfficeId == rentOfficeId);
 
     public async Task DeleteCarModelAsync(CarModel carModel)
     {
@@ -48,6 +48,6 @@ public class CarService : ICarService
         await _context.SaveChangesAsync();
     }
 
-    public Task<List<CarModel>> GetAllCarModelsAsync() => 
-        _context.Cars.Include(x => x.Orders).ToListAsync();
+    public Task<List<CarModel>> GetAllCarModelsAsync(Guid rentOfficeId) => 
+        _context.Cars.Include(x => x.Orders).Where(x => x.RentOfficeId == rentOfficeId).ToListAsync();
 }

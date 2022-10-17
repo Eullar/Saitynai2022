@@ -7,7 +7,7 @@ public interface ICarService
 {
     public Task<CarModel> AddCarModelAsync(CarModel carModel);
     public Task<CarModel> UpdateCarModelAsync(CarModel carModel);
-    public Task<CarModel?> GetCarModelAsync(Guid carModelId);
+    public Task<CarModel?> GetCarModelAsync(Guid rentOfficeId, Guid carModelId);
     public Task DeleteCarModelAsync(CarModel carModel);
-    public Task<List<CarModel>> GetAllCarModelsAsync();
+    public Task<List<CarModel>> GetAllCarModelsAsync(Guid rentOfficeId);
 }
