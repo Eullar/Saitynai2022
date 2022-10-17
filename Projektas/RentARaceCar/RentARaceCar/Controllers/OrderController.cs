@@ -208,8 +208,10 @@ public class OrderController : ControllerBase
     
     private IEnumerable<Link> CreateLinksForOrders(Guid rentOfficeId, Guid carId, Guid orderId)
     {
+#pragma warning disable CS8601
         yield return new Link { Href = Url.Link("GetOrder", new { rentOfficeId, carId, orderId }), Rel = "self", Method = "GET" };
         yield return new Link { Href = Url.Link("DeleteOrder", new { rentOfficeId, carId, orderId }), Rel = "self", Method = "DELETE" };
+#pragma warning restore CS8601
     }
 
     private string? CreateResourceUri(PaginationParameters parameters, ResourceUriTypes type)

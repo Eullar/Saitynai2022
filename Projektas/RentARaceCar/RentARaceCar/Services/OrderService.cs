@@ -36,8 +36,8 @@ public class OrderService : IOrderService
         return orderModel;
     }
 
-    public Task<OrderModel?> GetOrderModelAsync(Guid orderModelId) => 
-        _context.Orders.FirstOrDefaultAsync(o => o.Id == orderModelId);
+    public Task<OrderModel?> GetOrderModelAsync(Guid carId, Guid orderModelId) => 
+        _context.Orders.FirstOrDefaultAsync(o => o.Id == orderModelId && o.CarId == carId);
 
     public async Task DeleteOrderModelAsync(OrderModel orderModel)
     {
@@ -45,6 +45,6 @@ public class OrderService : IOrderService
         await _context.SaveChangesAsync();
     }
 
-    public Task<List<OrderModel>> GetAllOrderModelsAsync() =>
-        _context.Orders.ToListAsync();
+    public Task<List<OrderModel>> GetAllOrderModelsAsync(Guid carId) =>
+        _context.Orders.Where(x => x.CarId == carId).ToListAsync();
 }
