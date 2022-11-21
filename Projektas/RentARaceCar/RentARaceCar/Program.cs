@@ -38,16 +38,9 @@ builder.Services.AddAuthentication(
             new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]));
     });
 
-var connectionString = "server=host.docker.internal;user=root;password=password;database=RentARaceCar";
-
 builder.Services.AddControllers();
 
-builder.Services.AddDbContext<RentARaceCarDbContext>(dbContextOptions =>
-    dbContextOptions.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
-        .LogTo(Console.WriteLine, LogLevel.Information)
-        .EnableSensitiveDataLogging()
-        .EnableDetailedErrors()
-);
+builder.Services.AddDbContext<RentARaceCarDbContext>();
 
 builder.Services.AddScoped<IRentOfficeService, RentOfficeService>();
 builder.Services.AddScoped<ICarService, CarService>();
