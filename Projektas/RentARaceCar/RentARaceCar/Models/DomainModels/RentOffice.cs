@@ -6,5 +6,5 @@ public class RentOfficeModel
     public string Name { get; set; }
     public string Location { get; set; }
     
-    public virtual List<CarModel> Cars { get; set; }
+    public List<CarModel> Cars { get; set; }
 }

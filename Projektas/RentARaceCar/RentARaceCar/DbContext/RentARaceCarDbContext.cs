@@ -1,21 +1,25 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using RentARaceCar.Models;
 using RentARaceCar.Models.DomainModels;
 
 namespace RentARaceCar.DbContext;
 
-public class RentARaceCarDbContext : Microsoft.EntityFrameworkCore.DbContext
+public class RentARaceCarDbContext : IdentityDbContext<UserModel>
 {
+    private readonly IConfiguration _configuration;
     public DbSet<CarModel> Cars { get; set; }
     public DbSet<OrderModel> Orders { get; set; }
     public DbSet<RentOfficeModel> RentOffices { get; set; }
 
-    public RentARaceCarDbContext(DbContextOptions<RentARaceCarDbContext> dbContextOptions) : base(dbContextOptions)
-    {
-    }
+    public RentARaceCarDbContext(IConfiguration configuration, DbContextOptions<RentARaceCarDbContext> dbContextOptions)
+        : base(dbContextOptions) =>
+        _configuration = configuration;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
+
         modelBuilder
             .Entity<RentOfficeModel>()
             .ToTable("RentOffices");
@@ -42,7 +46,7 @@ public class RentARaceCarDbContext : Microsoft.EntityFrameworkCore.DbContext
     
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        var connectionString = "server=localhost;user=root;password=password;database=RentARaceCar";
+        var connectionString = _configuration.GetConnectionString("RentARacecarConnectionString");
         optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
     }
 }

@@ -12,6 +12,6 @@ public class CarModel
     public TyreCompounds TyreCompound { get; set; }
     public Guid RentOfficeId { get; set; }
 
-    public virtual RentOfficeModel RentOffice { get; set; }
-    public virtual List<OrderModel> Orders { get; set; }
+    public RentOfficeModel RentOffice { get; set; }
+    public List<OrderModel> Orders { get; set; }
 }

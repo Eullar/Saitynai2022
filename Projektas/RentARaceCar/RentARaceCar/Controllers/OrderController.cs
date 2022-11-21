@@ -1,10 +1,14 @@
-﻿using System.Text.Json;
+﻿using System.Security.Claims;
+using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.JsonWebTokens;
 using RentARaceCar.Enums;
 using RentARaceCar.Extensions;
 using RentARaceCar.Helpers;
 using RentARaceCar.Interfaces.Services;
 using RentARaceCar.Models;
+using RentARaceCar.Models.Authentication;
 using RentARaceCar.Models.DomainModels;
 using RentARaceCar.Models.Requests.Order;
 
@@ -17,15 +21,22 @@ public class OrderController : ControllerBase
     private readonly IRentOfficeService _rentOfficeService;
     private readonly ICarService _carService;
     private readonly IOrderService _orderService;
+    private readonly IAuthorizationService _authorizationServiceService;
 
-    public OrderController(IRentOfficeService rentOfficeService, ICarService carService, IOrderService orderService)
+    public OrderController(
+        IRentOfficeService rentOfficeService, 
+        ICarService carService, 
+        IOrderService orderService,
+        IAuthorizationService authorizationServiceService)
     {
         _rentOfficeService = rentOfficeService;
         _carService = carService;
         _orderService = orderService;
+        _authorizationServiceService = authorizationServiceService;
     }
     
     [HttpPost(Name = "AddOrder")]
+    [Authorize(Roles = $"{Roles.Admin},{Roles.User}")]
     public async Task<ActionResult<Order>> AddOrder(Guid rentOfficeId, Guid carId, AddOrderRequest request)
     {
         if (carId == Guid.Empty || rentOfficeId == Guid.Empty)
@@ -51,7 +62,8 @@ public class OrderController : ControllerBase
         {
             CarId = carId,
             OrderDate = DateTime.UtcNow,
-            RentDate = request.RentDate.Date
+            RentDate = request.RentDate,
+            UserId = User.FindFirstValue(JwtRegisteredClaimNames.Sub)
         };
 
         var order = await _orderService.AddOrderModelAsync(orderModel);
@@ -90,22 +102,24 @@ public class OrderController : ControllerBase
 
         return Ok(new {Resource = order.ToOrder(), Links = CreateLinksForOrders(rentOfficeId, carId, orderId)});
     }
-    
+
     [HttpPut("{orderId:guid}", Name = "UpdateOrder")]
-    public async Task<ActionResult<Order>> UpdateOrder(Guid rentOfficeId, Guid carId, Guid orderId, UpdateOrderRequest request)
+    [Authorize(Roles = $"{Roles.Admin},{Roles.User}")]
+    public async Task<ActionResult<Order>> UpdateOrder(Guid rentOfficeId, Guid carId, Guid orderId,
+        UpdateOrderRequest request)
     {
         if (rentOfficeId == Guid.Empty || carId == Guid.Empty || orderId == Guid.Empty)
         {
             return BadRequest();
         }
-        
+
         var rentOffice = await _rentOfficeService.GetRentOfficeAsync(rentOfficeId);
 
         if (rentOffice is null)
         {
             return NotFound("Rent Office not found");
         }
-        
+
         var car = await _carService.GetCarModelAsync(rentOfficeId, carId);
 
         if (car is null)
@@ -119,7 +133,17 @@ public class OrderController : ControllerBase
         {
             return NotFound();
         }
-        
+
+        if (!User.IsInRole(Roles.Admin))
+        {
+            var authorizationResult =
+                await _authorizationServiceService.AuthorizeAsync(User, order, PolicyNames.ResourceOwner);
+            if (!authorizationResult.Succeeded)
+            {
+                return Forbid();
+            }   
+        }
+
         order.RentDate = request.RentDate;
 
         return Ok(await _orderService.UpdateOrderModelAsync(order).ToOrderAsync());
@@ -152,6 +176,12 @@ public class OrderController : ControllerBase
         if (order is null)
         {
             return NotFound();
+        }
+        var authorizationResult =
+                await _authorizationServiceService.AuthorizeAsync(User, order, PolicyNames.ResourceOwner);
+        if (!authorizationResult.Succeeded)
+        {
+            return Forbid();
         }
 
         await _orderService.DeleteOrderModelAsync(order);

@@ -1,11 +1,17 @@
-﻿namespace RentARaceCar.Models.DomainModels;
+﻿using System.ComponentModel.DataAnnotations;
+using RentARaceCar.Interfaces.Authentication;
 
-public class OrderModel
+namespace RentARaceCar.Models.DomainModels;
+
+public class OrderModel : IUserOwnedResource
 {
     public Guid Id { get; set; }
     public DateTime OrderDate { get; set; }
     public DateTime RentDate { get; set; }
     public Guid CarId { get; set; }
+    [Required]
+    public string UserId { get; set; }
 
-    public virtual CarModel Car { get; set; }
+    public CarModel Car { get; set; }
+    public UserModel User { get; set; }
 }

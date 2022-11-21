@@ -1,10 +1,14 @@
 ﻿using System.Text.Json;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using RentARaceCar.Enums;
 using RentARaceCar.Extensions;
 using RentARaceCar.Helpers;
 using RentARaceCar.Interfaces.Services;
 using RentARaceCar.Models;
+using RentARaceCar.Models.Authentication;
 using RentARaceCar.Models.Requests.RentOffice;
 
 namespace RentARaceCar.Controllers;
@@ -17,8 +21,9 @@ public class RentOfficeController : ControllerBase
 
     public RentOfficeController(IRentOfficeService rentOfficeService) => 
         _rentOfficeService = rentOfficeService;
-    
+
     [HttpPost(Name = "AddRentOffice")]
+    [Authorize(Roles = Roles.Admin)]
     public async Task<ActionResult<RentOffice>> AddRentOffice(AddRentOfficeRequest rentOffice)
     {
         var rentOfficeModel = await _rentOfficeService.AddRentOfficeAsync(rentOffice);
@@ -45,13 +50,14 @@ public class RentOfficeController : ControllerBase
     }
 
     [HttpPut("{rentOfficeId:guid}", Name = "UpdateRentOffice")]
+    [Authorize(Roles = Roles.Admin)]
     public async Task<ActionResult<RentOffice>> UpdateRentOffice(Guid rentOfficeId, UpdateRentOfficeRequest request)
     {
         if (rentOfficeId == Guid.Empty)
         {
             return BadRequest("Rent Office Id must be Guid");
         }
-        
+
         var rentOffice = await _rentOfficeService.GetRentOfficeAsync(rentOfficeId);
         
         if (rentOffice is null)
@@ -66,6 +72,7 @@ public class RentOfficeController : ControllerBase
     }
     
     [HttpDelete("{rentOfficeId:guid}", Name = "DeleteRentOffice")]
+    [Authorize(Roles = Roles.Admin)]
     public async Task<ActionResult> DeleteRentOffice(Guid rentOfficeId)
     {
         if (rentOfficeId == Guid.Empty)

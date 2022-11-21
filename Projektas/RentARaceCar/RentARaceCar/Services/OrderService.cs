@@ -19,7 +19,8 @@ public class OrderService : IOrderService
             Id = Guid.NewGuid(),
             CarId = orderModel.CarId,
             OrderDate = DateTime.Now,
-            RentDate = orderModel.RentDate
+            RentDate = orderModel.RentDate,
+            UserId = orderModel.UserId
         };
 
         await _context.AddAsync(orderModelObject);

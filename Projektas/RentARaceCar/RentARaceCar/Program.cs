@@ -1,14 +1,44 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using RentARaceCar.DbContext;
+using RentARaceCar.Helpers;
+using RentARaceCar.Interfaces.Authentication;
 using RentARaceCar.Interfaces.Services;
+using RentARaceCar.Models.Authentication;
+using RentARaceCar.Models.DomainModels;
 using RentARaceCar.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllers();
 
-var connectionString = "server=localhost;user=root;password=password;database=RentARaceCar";
+builder.Services.AddIdentity<UserModel, IdentityRole>()
+    .AddEntityFrameworkStores<RentARaceCarDbContext>()
+    .AddDefaultTokenProviders();
+
+builder.Services.AddAuthentication(
+    options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters.ValidAudience = builder.Configuration["JWT:ValidAudience"];
+        options.TokenValidationParameters.ValidIssuer = builder.Configuration["JWT:ValidIssuer"];
+        options.TokenValidationParameters.IssuerSigningKey =
+            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]));
+    });
+
+var connectionString = "server=host.docker.internal;user=root;password=password;database=RentARaceCar";
 
 builder.Services.AddControllers();
 
@@ -22,6 +52,15 @@ builder.Services.AddDbContext<RentARaceCarDbContext>(dbContextOptions =>
 builder.Services.AddScoped<IRentOfficeService, RentOfficeService>();
 builder.Services.AddScoped<ICarService, CarService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
+builder.Services.AddScoped<AuthenticationSeeder>();
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy(PolicyNames.ResourceOwner, policy => policy.Requirements.Add(new ResourceOwnerRequirement()));
+});
+
+builder.Services.AddSingleton<IAuthorizationHandler, ResourceOwnerAuthorizationHandler>();
 
 var app = builder.Build();
 
@@ -39,6 +78,14 @@ app.UseStaticFiles();
 app.UseRouting();
 app.MapControllers();
 
+app.UseAuthentication();
 app.UseAuthorization();
+
+using var scope = app.Services.CreateScope();
+var dbContext = scope.ServiceProvider.GetRequiredService<RentARaceCarDbContext>();
+dbContext.Database.Migrate();
+
+var dbSeeder = scope.ServiceProvider.GetRequiredService<AuthenticationSeeder>();
+await dbSeeder.SeedAsync();
 
 app.Run();

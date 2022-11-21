@@ -1,10 +1,12 @@
 ﻿using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RentARaceCar.Enums;
 using RentARaceCar.Extensions;
 using RentARaceCar.Helpers;
 using RentARaceCar.Interfaces.Services;
 using RentARaceCar.Models;
+using RentARaceCar.Models.Authentication;
 using RentARaceCar.Models.DomainModels;
 using RentARaceCar.Models.Requests.Car;
 
@@ -24,6 +26,7 @@ public class CarController : ControllerBase
     }
 
     [HttpPost(Name = "AddCar")]
+    [Authorize(Roles = Roles.Admin)]
     public async Task<ActionResult<Car>> AddCar(Guid rentOfficeId, AddCarRequest request)
     {
         if (rentOfficeId == Guid.Empty)
@@ -78,6 +81,7 @@ public class CarController : ControllerBase
     }
 
     [HttpPut("{carId:guid}", Name = "UpdateCar")]
+    [Authorize(Roles = Roles.Admin)]
     public async Task<ActionResult<Car>> UpdateCar(Guid rentOfficeId, Guid carId, UpdateCarRequest request)
     {
         if (rentOfficeId == Guid.Empty || carId == Guid.Empty)
@@ -109,6 +113,7 @@ public class CarController : ControllerBase
     }
 
     [HttpDelete("{carId:guid}", Name = "DeleteCar")]
+    [Authorize(Roles = Roles.Admin)]
     public async Task<ActionResult> DeleteCar(Guid rentOfficeId, Guid carId)
     {
         if (rentOfficeId == Guid.Empty || carId == Guid.Empty)
