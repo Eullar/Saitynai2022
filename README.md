@@ -553,3 +553,6 @@ Bearer Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb
 ```
 ```
 ---
+
+# Išvados
+Projektas pavyko, visos norimos funkcijos išpildytos. Projekto vykdymo metu buvo išmokta dirbti su JWT tokenais, sukurti intuityvią svetainę su vienu iš daugelio front end karkasų. 
