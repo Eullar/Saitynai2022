@@ -1,0 +1,30 @@
+.cover img {
+  width: 100%;
+}
+
+body {
+  background: #AEAEAE;
+}
+
+
+div.content {
+  padding: 1px 16px;
+  text-align: center;
+  height: 100%;
+  color: white;
+  background-color: AEAEAE;
+}
+
+.sidebar {
+  width: 100%;
+  height: auto;
+  position: relative;
+}
+
+.sidebar a {
+  float: left;
+}
+
+div.content {
+  margin-left: 0;
+}

@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.JsonWebTokens;
 using RentARaceCar.Enums;
@@ -100,7 +101,7 @@ public class OrderController : ControllerBase
             return NotFound();
         }
 
-        return Ok(new {Resource = order.ToOrder(), Links = CreateLinksForOrders(rentOfficeId, carId, orderId)});
+        return Ok(order.ToOrder());
     }
 
     [HttpPut("{orderId:guid}", Name = "UpdateOrder")]
@@ -211,27 +212,14 @@ public class OrderController : ControllerBase
         }
 
         var orderModels = await _orderService.GetAllOrderModelsAsync(carId);
-
-        var orders = PagedList<Order>.Create(orderModels.Select(c => c.ToOrder()).AsQueryable(),
-            parameters.PageNumber, parameters.PageSize);
-
-        var previousPageLink =
-            orders.HasPrevious ? CreateResourceUri(parameters, ResourceUriTypes.PreviousPage) : null;
-        
-        var nextPageLink =
-            orders.HasNext ? CreateResourceUri(parameters, ResourceUriTypes.NextPage) : null;
-
-        var paginationMetadata = new
+        var orders = new List<Order>();
+        foreach (var order in orderModels)
         {
-            totalCount = orders.TotalCount,
-            pageSize = orders.PageSize,
-            currentPage = orders.CurrentPage,
-            totalPages = orders.TotalPages,
-            previousPageLink,
-            nextPageLink
-        };
-        
-        Response.Headers.Add("Pagination", JsonSerializer.Serialize(paginationMetadata));
+            if ((await _authorizationServiceService.AuthorizeAsync(User, order, PolicyNames.ResourceOwner)).Succeeded)
+            {
+                orders.Add(order.ToOrder());
+            }
+        }
 
         return orders;
     }

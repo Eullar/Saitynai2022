@@ -77,7 +77,7 @@ public class CarController : ControllerBase
             return NotFound("Car not found");
         }
 
-        return Ok(new {Resource = car.ToCar(), Links = CreateLinksForCars(rentOfficeId, carId)});
+        return Ok(car.ToCar());
     }
 
     [HttpPut("{carId:guid}", Name = "UpdateCar")]

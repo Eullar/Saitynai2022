@@ -46,7 +46,7 @@ public class RentOfficeController : ControllerBase
             return NotFound("Rent Office not found");
         }
 
-        return Ok(new {Resource = rentOffice.ToRentOffice(), Links = CreateLinksForRentOffices(rentOfficeId)});
+        return Ok(rentOffice.ToRentOffice());
     }
 
     [HttpPut("{rentOfficeId:guid}", Name = "UpdateRentOffice")]
@@ -106,28 +106,7 @@ public class RentOfficeController : ControllerBase
             return Ok(new List<RentOffice>());
         }
 
-        var rentOffices = PagedList<RentOffice>.Create(rentOfficeModels.Select(r => r.ToRentOffice()!).AsQueryable(),
-            parameters.PageNumber, parameters.PageSize);
-
-        var previousPageLink =
-            rentOffices.HasPrevious ? CreateResourceUri(parameters, ResourceUriTypes.PreviousPage) : null;
-        
-        var nextPageLink =
-            rentOffices.HasNext ? CreateResourceUri(parameters, ResourceUriTypes.NextPage) : null;
-
-        var paginationMetadata = new
-        {
-            totalCount = rentOffices.TotalCount,
-            pageSize = rentOffices.PageSize,
-            currentPage = rentOffices.CurrentPage,
-            totalPages = rentOffices.TotalPages,
-            previousPageLink,
-            nextPageLink
-        };
-        
-        Response.Headers.Add("Pagination", JsonSerializer.Serialize(paginationMetadata));
-
-        return rentOffices;
+        return rentOfficeModels.Select(x => x.ToRentOffice()).ToList();
     }
 
     private IEnumerable<Link> CreateLinksForRentOffices(Guid rentOfficeId)

@@ -46,7 +46,7 @@ public class RentARaceCarDbContext : IdentityDbContext<UserModel>
     
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        var connectionString = _configuration.GetValue<string>("RentARacecarConnectionString");
+        var connectionString = _configuration.GetValue<string>("RentARaceCarConnectionString");
         optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
     }
 }
